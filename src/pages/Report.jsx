@@ -1,151 +1,224 @@
-import React from "react";
-import supportImg from "../assets/support.jpg"; // ✅ Make sure this exists in src/assets
+import { useState, useEffect } from "react";
 
-const cards = [
-  { title: "Police Helpline 🚔", text: "Dial 100 immediately if you are in danger.", num: "100" },
-  { title: "Women’s Helpline 👩‍🦰", text: "Dial 181 for immediate support for women in distress.", num: "181" },
-  { title: "National Helpline ☎️", text: "Dial 1091 for round-the-clock assistance.", num: "1091" },
-  { title: "Student Helpline 🎓", text: "For student emergencies, call 1098.", num: "1098" },
-  { title: "Animal Welfare 🐾", text: "Call 1962 to report animal cruelty or rescues.", num: "1962" },
-];
+export default function Report() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    type: "",
+    customIssue: "",
+    title: "",
+    description: "",
+  });
 
-export default function Support() {
+  const [reports, setReports] = useState([]);
+
+  // Load reports from localStorage on page load
+  useEffect(() => {
+    const savedReports = JSON.parse(localStorage.getItem("reports")) || [];
+    setReports(savedReports);
+  }, []);
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  // Handle report submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Assign a random status to simulate real tracking
+    const statuses = ["Pending", "Under Review", "Solved"];
+    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+
+    const newReport = {
+      ...form,
+      id: Date.now(),
+      status: randomStatus,
+      date: new Date().toLocaleString(),
+    };
+
+    const updatedReports = [...reports, newReport];
+    setReports(updatedReports);
+    localStorage.setItem("reports", JSON.stringify(updatedReports));
+
+    alert("Your report has been safely submitted 💖");
+    setForm({
+      name: "",
+      email: "",
+      phone: "",
+      type: "",
+      customIssue: "",
+      title: "",
+      description: "",
+    });
+  };
+
   return (
-    <main className="container hero" style={{ padding: "30px" }}>
-      {/* Header Section */}
-      <div
-        className="header"
+    <main className="container hero">
+      <h1>Report an Issue 🚨</h1>
+      <p style={{ color: "#6b5f68", maxWidth: "700px" }}>
+        You can confidentially report your issue here. Your data is safe and visible only to you.
+      </p>
+
+      {/* --- REPORT FORM --- */}
+      <form
+        onSubmit={handleSubmit}
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
+          background: "#ffeef4",
+          padding: "24px",
+          borderRadius: "22px",
+          boxShadow: "var(--shadow)",
+          marginTop: "20px",
+          maxWidth: "600px",
         }}
       >
-        <div>
-          <h1>We’re Here for You 💜</h1>
-          <p style={{ color: "#6b5f68" }}>
-            In case of an emergency, don’t wait. Use the resources below to get immediate help.
-          </p>
-        </div>
-        <img
-          src={supportImg}
-          alt="Support illustration"
-          style={{
-            width: "180px",
-            height: "180px",
-            borderRadius: "50%",
-            objectFit: "cover",
-            boxShadow: "0 0 15px rgba(0,0,0,0.2)",
-          }}
+        <label className="label">Full Name</label>
+        <input
+          name="name"
+          className="input"
+          placeholder="Enter your full name"
+          value={form.name}
+          onChange={handleChange}
         />
-      </div>
 
-      {/* Know Your Rights / Services Section — moved to top */}
-      <div
-        className="info-section"
-        style={{
-          marginTop: "40px",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: "30px",
-          textAlign: "center",
-        }}
-      >
-        <a
-          href="https://knowindia.india.gov.in/profile/fundamental-rights.php"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            textDecoration: "none",
-            color: "inherit",
-            background: "#f3e8ff",
-            padding: "25px",
-            borderRadius: "15px",
-            width: "280px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-            transition: "transform 0.2s",
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-          onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        <label className="label" style={{ marginTop: "16px" }}>
+          Email ID
+        </label>
+        <input
+          name="email"
+          type="email"
+          className="input"
+          placeholder="Enter your email"
+          value={form.email}
+          onChange={handleChange}
+        />
+
+        <label className="label" style={{ marginTop: "16px" }}>
+          Phone Number
+        </label>
+        <input
+          name="phone"
+          className="input"
+          placeholder="Enter your phone number"
+          value={form.phone}
+          onChange={handleChange}
+        />
+
+        <label className="label" style={{ marginTop: "16px" }}>
+          Issue Title
+        </label>
+        <input
+          name="title"
+          className="input"
+          placeholder="Short title for your issue"
+          value={form.title}
+          onChange={handleChange}
+        />
+
+        <label className="label" style={{ marginTop: "16px" }}>
+          Type of Issue
+        </label>
+        <select
+          name="type"
+          className="input"
+          value={form.type}
+          onChange={handleChange}
         >
-          <h2>🧾 Know Your Rights</h2>
-          <p>Learn about your fundamental rights and protections under Indian law.</p>
-        </a>
+          <option value="">Select</option>
+          <option>Harassment</option>
+          <option>Domestic Violence</option>
+          <option>Abuse</option>
+          <option>Cyber Threat</option>
+          <option value="Other">Other</option>
+        </select>
 
-        <a
-          href="https://services.india.gov.in/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            textDecoration: "none",
-            color: "inherit",
-            background: "#e3f2fd",
-            padding: "25px",
-            borderRadius: "15px",
-            width: "280px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-            transition: "transform 0.2s",
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-          onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
-        >
-          <h2>💼 Know Your Services</h2>
-          <p>Explore government welfare programs, online services, and helplines.</p>
-        </a>
-      </div>
+        {form.type === "Other" && (
+          <>
+            <label className="label" style={{ marginTop: "16px" }}>
+              Specify Issue
+            </label>
+            <input
+              name="customIssue"
+              className="input"
+              placeholder="Describe your issue type"
+              value={form.customIssue}
+              onChange={handleChange}
+            />
+          </>
+        )}
 
-      {/* Helpline Cards - 4 per row */}
-      <div className="hero-grid" style={{ marginTop: "40px" }}>
-        <section>
+        <label className="label" style={{ marginTop: "16px" }}>
+          Description
+        </label>
+        <textarea
+          name="description"
+          rows="5"
+          className="input"
+          placeholder="Describe what happened..."
+          value={form.description}
+          onChange={handleChange}
+        />
+
+        <button className="btn" style={{ marginTop: "20px" }}>
+          Submit Report
+        </button>
+      </form>
+
+      {/* --- REPORT HISTORY SECTION --- */}
+      <section style={{ marginTop: "60px", width: "100%" }}>
+        <h2 style={{ color: "#e24d7a" }}>Your Report History 🗂️</h2>
+        {reports.length === 0 ? (
+          <p style={{ color: "#6b5f68" }}>No reports yet. Submit one to get started.</p>
+        ) : (
           <div
             className="grid"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "25px",
-              justifyItems: "center",
-            }}
+            style={{ marginTop: "20px", gridTemplateColumns: "1fr", gap: "15px" }}
           >
-            {cards.map((c) => (
+            {reports.map((report) => (
               <div
+                key={report.id}
                 className="support-card"
-                key={c.title}
                 style={{
+                  textAlign: "left",
                   background: "#fff",
                   padding: "20px",
-                  borderRadius: "15px",
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-                  textAlign: "center",
+                  borderRadius: "16px",
+                  boxShadow: "var(--shadow)",
                 }}
               >
-                <h3>{c.title}</h3>
-                <p style={{ color: "#6b5f68" }}>{c.text}</p>
-                <button
-                  style={{
-                    background: "#7b2cbf",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 15px",
-                    cursor: "pointer",
-                    marginTop: "10px",
-                  }}
-                  onClick={() => (window.location.href = `tel:${c.num}`)}
-                >
-                  Call Now
-                </button>
+                <h3 style={{ color: "#cc3c68" }}>{report.title}</h3>
+                <p>
+                  <strong>Type:</strong>{" "}
+                  {report.type === "Other" ? report.customIssue : report.type}
+                </p>
+                <p>
+                  <strong>Date:</strong> {report.date}
+                </p>
+                <p>
+                  <strong>Status:</strong>{" "}
+                  <span
+                    style={{
+                      color:
+                        report.status === "Solved"
+                          ? "green"
+                          : report.status === "Under Review"
+                          ? "#e6a700"
+                          : "red",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {report.status}
+                  </span>
+                </p>
+                <p style={{ color: "#6b5f68" }}>{report.description}</p>
               </div>
             ))}
           </div>
-        </section>
-      </div>
-
-      {/* Footer */}
-      <div style={{ marginTop: "40px", textAlign: "center", color: "#6b5f68" }}>
-        <p>You are never alone 💜. Reach out — help is always available 24/7.</p>
-      </div>
+        )}
+      </section>
     </main>
   );
 }
